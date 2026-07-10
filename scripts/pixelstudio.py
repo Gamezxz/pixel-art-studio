@@ -1261,7 +1261,7 @@ class Sprite:
         else:
             s = float(scale)
             method = "block" if not s.is_integer() else "nearest"
-            s = max(1, int(round(s)))
+            s = max(1, int(s)) if s.is_integer() else s
         if s > 1:
             im = (im.resize((im.width // s, im.height // s), NEAREST) if method == "nearest"
                   else block_downscale(im, s))
@@ -1333,15 +1333,31 @@ def estimate_scale(im):
 
 
 def block_downscale(im, s):
-    """Sample block centers at scale s (survives sloppy/resampled upscales, unlike NEAREST
-    resize which produces mixels on non-integer scales)."""
+    """Dominant-color block sampling at scale s: each output pixel is the modal color
+    of its source block (bucketed to 5 bits/channel, then averaged within the winning
+    bucket). Robust to painterly texture/noise where a single center-pixel sample
+    turns shading detail into per-pixel speckle."""
     w, h = im.size
     tw, th = round(w / s), round(h / s)
     small = Image.new("RGBA", (tw, th))
     sp, px = small.load(), im.load()
     for ty in range(th):
+        y0, y1 = int(ty * s), max(int(ty * s) + 1, min(h, int((ty + 1) * s)))
         for tx in range(tw):
-            sp[tx, ty] = px[min(w - 1, int((tx + 0.5) * s)), min(h - 1, int((ty + 0.5) * s))]
+            x0, x1 = int(tx * s), max(int(tx * s) + 1, min(w, int((tx + 1) * s)))
+            buckets = {}
+            for y in range(y0, y1):
+                for x in range(x0, x1):
+                    r, g, b, a = px[x, y]
+                    if a < 128:
+                        key = None
+                    else:
+                        key = (r >> 3, g >> 3, b >> 3)
+                    n, sr, sg, sb, sa = buckets.get(key, (0, 0, 0, 0, 0))
+                    buckets[key] = (n + 1, sr + r, sg + g, sb + b, sa + a)
+            key, (n, sr, sg, sb, sa) = max(buckets.items(), key=lambda kv: kv[1][0])
+            sp[tx, ty] = (0, 0, 0, 0) if key is None else (
+                sr // n, sg // n, sb // n, 255)
     return small
 
 
