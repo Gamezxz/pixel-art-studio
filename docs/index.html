@@ -128,9 +128,9 @@ python3 scripts/pixelpipe.py generated.png --palette my_game</pre>
       <p class="anim-head">…then animate it deterministically — the same sprite, every frame:</p>
       <div class="anim-row">
         <figure><img src="assets/knight_idle.gif" alt="knight idle"><figcaption>idle · 4 frames · breathing + plume sway</figcaption></figure>
-        <figure><img src="assets/knight_walk.gif" alt="knight walk"><figcaption>walk · 6 frames · march bob + plume trail</figcaption></figure>
+        <figure><img src="assets/knight_walk.gif" alt="knight walk" height="360"><figcaption>walk · 6 frames · real stride, cleaned from a codex walk-cycle sheet</figcaption></figure>
       </div>
-      <p class="demo-cap">A codex-generated knight (174,172 colors) → <code>pixelpipe</code> dominant-block sampling (128px · 28 colors) → split into part-layers and puppeted. No re-rolling between frames — the build script <em>is</em> the animation.</p>
+      <p class="demo-cap">A codex-generated knight (174,172 colors) → <code>pixelpipe</code> dominant-block sampling (128px · 28 colors). Idle is puppeted from the single cleaned sprite; the walk is a codex-generated 6-frame walk-cycle sheet cleaned in one pass, so every frame shares one palette. No re-rolling between frames — the build script <em>is</em> the animation.</p>
     </div>
   </div>
 </section>

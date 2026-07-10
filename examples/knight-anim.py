@@ -77,10 +77,26 @@ def split_layers(im):
             if a and r > 110 and r > g * 1.8 and r > b * 1.8:
                 ppx[x, y] = px[x, y]
                 bpx[x, y] = (0, 0, 0, 0)
-    waist = int(h * 0.68)
-    legs = cut(body, (0, waist, w, h))
-    upper = cut(body, (0, 0, w, waist))
-    return plume, upper, legs
+    waist = int(h * 0.83)  # ankle line: below the tabard hem and the shield
+    lpx = body.load()
+    xs = [x for y in range(waist, h) for x in range(w) if lpx[x, y][3]]
+    mid = (min(xs) + max(xs)) // 2
+
+    def is_cloth(c):
+        r, g, b, a = c
+        return a and r > 90 and r > g * 1.5 and r > b * 1.5
+
+    leg_l = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    leg_r = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    upper = body.copy()
+    ll, rr, up = leg_l.load(), leg_r.load(), upper.load()
+    for y in range(waist, h):
+        for x in range(w):
+            c = lpx[x, y]
+            if c[3] and not is_cloth(c):
+                (ll if x < mid else rr)[x, y] = c
+                up[x, y] = (0, 0, 0, 0)
+    return plume, upper, leg_l, leg_r
 
 
 def compose(size, parts):
@@ -129,19 +145,25 @@ def main():
     src, out_dir = sys.argv[1], sys.argv[2]
     os.makedirs(out_dir, exist_ok=True)
     im = outline(strip_bg(Image.open(src)))
-    plume, upper, legs = split_layers(im)
+    plume, upper, leg_l, leg_r = split_layers(im)
 
     # idle: breathing bob on the upper body, plume sways with it
     idle_specs = [((0, 0), (0, 0)), ((1, 0), (0, 1)), ((1, 1), (0, 1)), ((0, 0), (0, 0))]
-    idle = [compose(im.size, [(legs, (0, 0)), (upper, u), (plume, p)])
+    idle = [compose(im.size, [(leg_l, (0, 0)), (leg_r, (0, 0)), (upper, u), (plume, p)])
             for p, u in idle_specs]
     frame_to_gif(idle, os.path.join(out_dir, "knight_idle.gif"), [320] * 4)
 
-    # walk: march bob on the whole figure, plume trails a step behind
-    bob = [0, -1, 0, 0, -1, 0]
-    trail = [0, -1, -2, -1, 0, 1]
-    walk = [compose(im.size, [(legs, (0, 0)), (upper, (0, bob[i])),
-                              (plume, (trail[i], bob[i]))])
+    # walk: march-in-place — legs lift alternately (knee raise), torso bobs and
+    # sways toward the planted leg, plume trails a step behind the bob
+    #            f0    f1    f2    f3    f4    f5
+    ll_y = [0, -2, -4, -1, 0, 0]        # left boot lift
+    rr_y = [0, 0, 0, -1, -4, -2]        # right boot lift (opposite phase)
+    bob = [0, -1, -2, -1, -2, -1]       # torso, lands on contact frames
+    sway = [0, 1, 1, 0, -1, -1]         # lean over the planted leg
+    trail = [0, -1, -2, -1, -2, -1]     # plume drag
+    walk = [compose(im.size, [(leg_l, (0, ll_y[i])), (leg_r, (0, rr_y[i])),
+                              (upper, (sway[i], bob[i])),
+                              (plume, (sway[i] + trail[i], bob[i]))])
             for i in range(6)]
     frame_to_gif(walk, os.path.join(out_dir, "knight_walk.gif"), [110] * 6)
     spritesheet(walk, [110] * 6, os.path.join(out_dir, "knight_sheet.png"),
