@@ -9,48 +9,70 @@
 <meta property="og:description" content="Claude designs and places every pixel through Python/Pillow, critiques its own render, and iterates until it ships.">
 <meta property="og:image" content="https://gamezxz.github.io/pixel-art-studio/assets/witch.png">
 <style>
+  /* DNA — cointh: warm cream + terracotta, three-font system (serif/sans/mono) */
   :root{
-    --bg:#faf6ef; --ink:#2a2622; --coral:#e05d38; --coral-dark:#b8492b;
-    --card:#fffdf8; --line:#e8e0d2; --code:#f4ede0; --dim:#7a7267;
+    --bg:#f4f2ea;            /* warm cream canvas */
+    --panel:#efece1;         /* cream panel (warmer than white) */
+    --panel-2:#ebe7da;       /* recessed panel */
+    --ink:#28251f;           /* warm near-black */
+    --ink-soft:#36332b;
+    --dim:#6f6b60;           /* warm muted text */
+    --dim-2:#9c9587;         /* warm muted faint */
+    --line:#e0dccf;          /* warm hairline */
+    --terracotta:#cd6f4d;    /* primary accent */
+    --terracotta-deep:#b85c3b;
+    --terracotta-soft:#ec9978;
+    --terracotta-pale:#e1875f;
+    --code:#e9e4d5;
+    --serif:ui-serif,Georgia,Cambria,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,"Segoe UI",sans-serif}
+  body{background:var(--bg);color:var(--ink);font:17px/1.65 var(--sans);
+       -webkit-font-smoothing:antialiased}
   .wrap{max-width:900px;margin:0 auto;padding:0 24px}
-  header{padding:72px 0 40px;text-align:center}
-  h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(34px,6vw,56px);line-height:1.1;margin-bottom:16px}
-  h1 .px{color:var(--coral)}
-  .tagline{font-size:20px;color:var(--dim);max-width:620px;margin:0 auto 28px}
+  header{padding:80px 0 44px;text-align:center}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(34px,6vw,58px);
+     line-height:1.08;letter-spacing:-0.01em;margin-bottom:18px}
+  h1 .px{color:var(--terracotta)}
+  .tagline{font-size:20px;color:var(--dim);max-width:620px;margin:0 auto 30px}
+  .tagline strong{color:var(--ink-soft)}
   .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .btn{display:inline-block;padding:12px 26px;border-radius:10px;text-decoration:none;font-weight:600}
-  .btn-main{background:var(--coral);color:#fff}
-  .btn-main:hover{background:var(--coral-dark)}
-  .btn-ghost{border:2px solid var(--line);color:var(--ink)}
-  .btn-ghost:hover{border-color:var(--coral)}
-  .gallery{display:flex;gap:20px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:36px 0 8px}
+  .btn{display:inline-block;padding:13px 28px;border-radius:9px;text-decoration:none;
+       font-weight:600;font-family:var(--sans);transition:all .15s}
+  .btn-main{background:var(--terracotta);color:#fffdf8;
+            box-shadow:0 1px 0 var(--terracotta-deep)}
+  .btn-main:hover{background:var(--terracotta-deep);transform:translateY(-1px)}
+  .btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:var(--panel)}
+  .btn-ghost:hover{border-color:var(--terracotta);color:var(--terracotta-deep)}
+  .gallery{display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:40px 0 10px}
   .gallery figure{text-align:center}
   .gallery img{image-rendering:pixelated;background:
-    repeating-conic-gradient(#eee8db 0 25%,#f7f2e8 0 50%) 0 0/16px 16px;
-    border:1px solid var(--line);border-radius:8px;padding:10px}
-  .gallery figcaption{font-size:13px;color:var(--dim);margin-top:8px}
-  .note{text-align:center;color:var(--dim);font-size:15px;font-style:italic;padding-bottom:12px}
-  section{padding:44px 0;border-top:1px solid var(--line)}
-  h2{font-family:Georgia,serif;font-size:30px;margin-bottom:18px}
-  h2 span{color:var(--coral)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:22px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
-  .card h3{font-size:17px;margin-bottom:8px}
-  .card p{font-size:15px;color:var(--dim)}
-  .card .emoji{font-size:26px;display:block;margin-bottom:10px}
-  pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:20px;
-      overflow-x:auto;font:14px/1.55 "SF Mono",Menlo,monospace;margin-top:18px}
-  .cmt{color:#8a8171}.str{color:#b8492b}.kw{color:#4a6741;font-weight:600}
-  .loop{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:24px}
-  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;
-        font-size:15px;font-weight:600}
-  .step small{display:block;font-weight:400;color:var(--dim);font-size:13px}
-  .arrow{align-self:center;color:var(--coral);font-weight:700}
-  footer{padding:44px 0 60px;text-align:center;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
-  footer a{color:var(--coral)}
+    repeating-conic-gradient(#e9e4d5 0 25%,#f3efe2 0 50%) 0 0/16px 16px;
+    border:1px solid var(--line);border-radius:6px;padding:12px}
+  .gallery figcaption{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:10px;letter-spacing:.02em}
+  .note{text-align:center;color:var(--dim);font-size:15px;font-style:italic;padding-bottom:14px}
+  section{padding:48px 0;border-top:1px solid var(--line)}
+  h2{font-family:var(--serif);font-weight:700;font-size:32px;margin-bottom:18px;letter-spacing:-0.01em}
+  h2 span{color:var(--terracotta)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:24px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:24px;transition:transform .15s,border-color .15s}
+  .card:hover{transform:translateY(-2px);border-color:var(--terracotta-soft)}
+  .card h3{font-family:var(--sans);font-size:17px;font-weight:600;margin-bottom:8px;color:var(--ink)}
+  .card p{font-size:15px;color:var(--dim);line-height:1.55}
+  .card .emoji{font-size:26px;display:block;margin-bottom:12px}
+  pre{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:22px;
+      overflow-x:auto;font:13.5px/1.6 var(--mono);margin-top:18px}
+  .cmt{color:var(--dim-2)}.str{color:var(--terracotta-deep)}.kw{color:#5c7a4a;font-weight:600}
+  .loop{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:26px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 18px;
+        font-size:15px;font-weight:600;font-family:var(--sans)}
+  .step small{display:block;font-weight:400;color:var(--dim);font-size:13px;margin-top:2px}
+  .arrow{align-self:center;color:var(--terracotta);font-weight:700;font-family:var(--mono)}
+  footer{padding:48px 0 64px;text-align:center;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
+  footer a{color:var(--terracotta-deep);text-decoration:none}
+  footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -149,6 +171,9 @@ pip3 install pillow</pre>
   <div class="wrap">
     MIT © <a href="https://github.com/Gamezxz">Gamezxz</a> · built with
     <a href="https://claude.com/claude-code">Claude Code</a> — and yes, Claude drew everything on this page
+    <div style="font-family:var(--mono);font-size:12px;color:var(--dim-2);margin-top:14px;letter-spacing:.04em">
+      pixel-art-studio · v1.0 · every pixel is a decision
+    </div>
   </div>
 </footer>
 
