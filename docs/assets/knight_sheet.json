@@ -1,0 +1,155 @@
+{
+ "frames": [
+  {
+   "filename": "frame_0",
+   "frame": {
+    "x": 1,
+    "y": 1,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "duration": 110
+  },
+  {
+   "filename": "frame_1",
+   "frame": {
+    "x": 98,
+    "y": 1,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "duration": 110
+  },
+  {
+   "filename": "frame_2",
+   "frame": {
+    "x": 195,
+    "y": 1,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "duration": 110
+  },
+  {
+   "filename": "frame_3",
+   "frame": {
+    "x": 1,
+    "y": 98,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "duration": 110
+  },
+  {
+   "filename": "frame_4",
+   "frame": {
+    "x": 98,
+    "y": 98,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "duration": 110
+  },
+  {
+   "filename": "frame_5",
+   "frame": {
+    "x": 195,
+    "y": 98,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "duration": 110
+  }
+ ],
+ "meta": {
+  "app": "pixelstudio",
+  "version": "1.0.0",
+  "image": "knight_sheet.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 292,
+   "h": 195
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "walk",
+    "from": 0,
+    "to": 5,
+    "direction": "forward"
+   }
+  ]
+ }
+}

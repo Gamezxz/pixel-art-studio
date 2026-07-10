@@ -74,6 +74,13 @@
   .demo img{max-width:100%;height:auto;border-radius:6px;display:block;margin:0 auto}
   .demo-cap{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.6}
   .demo-cap code{background:var(--code);padding:1px 5px;border-radius:3px;color:var(--terracotta-deep)}
+  .anim{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}
+  .anim-head{font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:14px}
+  .anim-row{display:flex;gap:24px;justify-content:center;flex-wrap:wrap}
+  .anim-row figure{text-align:center}
+  .anim-row img{image-rendering:pixelated;background:repeating-conic-gradient(#e9e4d5 0 25%,#f3efe2 0 50%) 0 0/16px 16px;
+    border:1px solid var(--line);border-radius:6px;padding:10px;max-width:100%}
+  .anim-row figcaption{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:8px}
   footer{padding:48px 0 64px;text-align:center;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
   footer a{color:var(--terracotta-deep);text-decoration:none}
   footer a:hover{text-decoration:underline}
@@ -117,6 +124,14 @@
   --strip-checker --max-colors 24 --display 6
 <span class="cmt"># or lock every asset to one game palette:</span>
 python3 scripts/pixelpipe.py generated.png --palette my_game</pre>
+    <div class="anim">
+      <p class="anim-head">…then animate it deterministically — the same sprite, every frame:</p>
+      <div class="anim-row">
+        <figure><img src="assets/knight_idle.gif" alt="knight idle"><figcaption>idle · 4 frames · breathing + plume sway</figcaption></figure>
+        <figure><img src="assets/knight_walk.gif" alt="knight walk"><figcaption>walk · 6 frames · march bob + plume trail</figcaption></figure>
+      </div>
+      <p class="demo-cap">A codex-generated knight (114,574 colors) → <code>pixelpipe</code> (20 colors) → split into part-layers and puppeted. No re-rolling between frames — the build script <em>is</em> the animation.</p>
+    </div>
   </div>
 </section>
 
