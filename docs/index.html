@@ -101,11 +101,12 @@
 
 <div class="wrap">
   <div class="gallery">
-    <figure><img src="assets/witch.png" height="230" alt="forest witch"><figcaption>forest witch 42×64 — learned style</figcaption></figure>
-    <figure><img src="assets/dragon.png" height="230" alt="dragon boss"><figcaption>dragon boss 64×64</figcaption></figure>
+    <figure><img src="assets/witch.png" height="230" alt="chibi witch"><figcaption>chibi witch 51×66 — learned style</figcaption></figure>
+    <figure><img src="assets/knight_chibi.png" height="230" alt="chibi knight"><figcaption>chibi knight 42×69</figcaption></figure>
+    <figure><img src="assets/dragon.png" height="200" alt="dragon hatchling"><figcaption>dragon hatchling 55×57</figcaption></figure>
     <figure><img src="assets/slime.gif" height="150" alt="slime animation"><figcaption>slime idle — 4 frames</figcaption></figure>
   </div>
-  <p class="note">All drawn pixel-by-pixel by Claude from text prompts — including the animation.</p>
+  <p class="note">A chibi cast in a style Claude <em>studied</em> from reference art (see the learned card), generated as one sheet and locked to one 31-color palette by <code>pixelpipe</code>. The slime: drawn pixel-by-pixel from a text prompt.</p>
 </div>
 
 <section id="hybrid">
@@ -118,7 +119,7 @@
     cast looks like one game.</p>
     <div class="demo">
       <img src="assets/cleanup_demo.png" alt="cleanup pipeline before/after">
-      <p class="demo-cap">① a clean sprite → ② simulated messy AI output (blur · 1,686 colors · checker bg) → ③ cleaned &amp; palette-locked (16 colors) by <code>pixelpipe</code></p>
+      <p class="demo-cap">a real run: codex-generated chibi cast (196,703 colors) → cleaned, background-stripped &amp; palette-locked (31 shared colors, ~64px each) by <code>pixelpipe</code> in one pass</p>
     </div>
 <pre>python3 scripts/pixelpipe.py generated.png <span class="cmt">\</span>
   --strip-checker --max-colors 24 --display 6
@@ -167,7 +168,7 @@ python3 scripts/pixelpipe.py generated.png --palette my_game</pre>
         retro palettes (Game Boy, PICO-8, C64…), engine export guides.</p></div>
       <div class="card"><span class="emoji">🧠</span><h3>It grows</h3>
         <p>Study an image → Claude writes an imperative style card → those rules and palettes apply
-        to every future artwork. The witch was drawn from one learned card.</p></div>
+        to every future artwork. The chibi cast follows one learned card studied from reference art.</p></div>
       <div class="card"><span class="emoji">🎞️</span><h3>Real deliverables</h3>
         <p>1x PNG masters, animated GIFs with proper transparency, spritesheets with
         Aseprite-compatible JSON for Unity / Godot / Phaser.</p></div>

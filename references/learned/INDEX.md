@@ -5,6 +5,4 @@ One line per study card. Newest last. Format:
 
 | # | Card | Source | Style | Palette |
 |---|---|---|---|---|
-
-*(No studies yet — add via the workflow in SKILL.md §Learning: run study.py → inspect
-zoom/swatch → write a card from TEMPLATE.md → add a row here.)*
+| 001 | 001-chibi-jrpg-cast.md | pinterest chibi JRPG fan sheet | ~26x36px chibi, head=half height, selout, 3-step hue-shifted ramps, no dither | — |
