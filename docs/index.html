@@ -70,6 +70,10 @@
         font-size:15px;font-weight:600;font-family:var(--sans)}
   .step small{display:block;font-weight:400;color:var(--dim);font-size:13px;margin-top:2px}
   .arrow{align-self:center;color:var(--terracotta);font-weight:700;font-family:var(--mono)}
+  .demo{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;text-align:center}
+  .demo img{max-width:100%;height:auto;border-radius:6px;display:block;margin:0 auto}
+  .demo-cap{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.6}
+  .demo-cap code{background:var(--code);padding:1px 5px;border-radius:3px;color:var(--terracotta-deep)}
   footer{padding:48px 0 64px;text-align:center;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
   footer a{color:var(--terracotta-deep);text-decoration:none}
   footer a:hover{text-decoration:underline}
@@ -83,6 +87,7 @@
   No Aseprite. No MCP server. No diffusion. <strong>Every pixel is a decision.</strong></p>
   <div class="btns">
     <a class="btn btn-main" href="https://github.com/Gamezxz/pixel-art-studio">Get it on GitHub</a>
+    <a class="btn btn-ghost" href="#hybrid">Clean AI art →</a>
     <a class="btn btn-ghost" href="#how">How it works</a>
   </div>
 </header>
@@ -95,6 +100,25 @@
   </div>
   <p class="note">All drawn pixel-by-pixel by Claude from text prompts — including the animation.</p>
 </div>
+
+<section id="hybrid">
+  <div class="wrap">
+    <h2>Or clean AI-generated art: <span>the hybrid pipeline</span></h2>
+    <p>Point <code>pixelpipe</code> at any image model's output (or a screenshot). It recovers the
+    true pixel grid, strips baked-in backgrounds, hardens alpha, kills orphan noise, collapses the
+    color explosion, and <strong>locks everything onto one shared palette</strong> — then hands you
+    a build script to keep editing and animating. Every asset shares one color vocabulary, so a whole
+    cast looks like one game.</p>
+    <div class="demo">
+      <img src="assets/cleanup_demo.png" alt="cleanup pipeline before/after">
+      <p class="demo-cap">① a clean sprite → ② simulated messy AI output (blur · 1,686 colors · checker bg) → ③ cleaned &amp; palette-locked (16 colors) by <code>pixelpipe</code></p>
+    </div>
+<pre>python3 scripts/pixelpipe.py generated.png <span class="cmt">\</span>
+  --strip-checker --max-colors 24 --display 6
+<span class="cmt"># or lock every asset to one game palette:</span>
+python3 scripts/pixelpipe.py generated.png --palette my_game</pre>
+  </div>
+</section>
 
 <section id="how">
   <div class="wrap">

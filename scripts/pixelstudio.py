@@ -106,6 +106,10 @@ def _dist2(a, b):
     return 30 * dr * dr + 59 * dg * dg + 11 * db * db
 
 
+def _rgb_to_hsv(r, g, b):
+    return colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
+
+
 def nearest(color, palette_rgba):
     return min(palette_rgba, key=lambda p: _dist2(color, p))
 
@@ -660,6 +664,187 @@ class Sprite:
         im.alpha_composite(stamp, (int(x), int(y)))
         return self
 
+    # ---------------- pixel-grid cleanup (for imported/generated art) ----------------
+
+    def _iter_cels(self, frames, layers):
+        fidx = ([self._f] if frames is None else
+                range(len(self.frames)) if frames == "all" else [i - 1 for i in frames])
+        lnames = ([self._l] if layers is None else
+                  self.layer_order if layers == "all" else list(layers))
+        for fi in fidx:
+            for ln in lnames:
+                cel = self.frames[fi].cels.get(ln)
+                if cel is not None:
+                    yield fi, ln, cel
+
+    def harden_alpha(self, threshold=128, steps=None, frames=None, layers=None):
+        """Snap semi-transparent pixels. threshold: alpha<threshold -> 0, else 255 (kills AA
+        fuzz + bg halos). steps: e.g. [0,64,160,255] quantizes alpha to discrete levels
+        (preserve painterly AA edges as a few alpha steps instead of binary)."""
+        for fi, ln, cel in self._iter_cels(frames, layers):
+            px = cel.load()
+            for y in range(self.h):
+                for x in range(self.w):
+                    r, g, b, a = px[x, y]
+                    if a == 0 or a == 255:
+                        continue
+                    if steps:
+                        nv = min(steps, key=lambda v: abs(v - a))
+                        px[x, y] = (r, g, b, nv)
+                    else:
+                        px[x, y] = (r, g, b, 255 if a >= threshold else 0)
+        return self
+
+    def despeckle(self, min_cluster=2, frames=None, layers=None):
+        """Remove isolated pixel clusters: connected components (4-way) of opaque pixels
+        smaller than min_cluster become transparent. Kills orphan noise from model output
+        without touching legitimate detail."""
+        for fi, ln, cel in self._iter_cels(frames, layers):
+            px = cel.load()
+            seen = [[False] * self.w for _ in range(self.h)]
+            kill = []
+            for sy in range(self.h):
+                for sx in range(self.w):
+                    if seen[sy][sx] or px[sx, sy][3] == 0:
+                        continue
+                    stack, comp = [(sx, sy)], []
+                    while stack:
+                        cx, cy = stack.pop()
+                        if cx < 0 or cy < 0 or cx >= self.w or cy >= self.h:
+                            continue
+                        if seen[cy][cx] or px[cx, cy][3] == 0:
+                            continue
+                        seen[cy][cx] = True
+                        comp.append((cx, cy))
+                        stack.extend([(cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)])
+                    if len(comp) < min_cluster:
+                        kill.extend(comp)
+            for cx, cy in kill:
+                px[cx, cy] = (0, 0, 0, 0)
+        return self
+
+    def dedupe_colors(self, tol=12, frames=None, layers=None):
+        """Merge colors within `tol` (max channel distance) into their most-used
+        representative. Collapses the near-duplicate color explosion typical of model output."""
+        reps = {}
+        for fi, ln, cel in self._iter_cels(frames, layers):
+            px = cel.load()
+            for y in range(self.h):
+                for x in range(self.w):
+                    r, g, b, a = px[x, y]
+                    if a == 0:
+                        continue
+                    key = (r, g, b)
+                    if key in reps:
+                        continue
+                    rep = None
+                    for cand in reps:
+                        if max(abs(cand[k] - key[k]) for k in range(3)) <= tol:
+                            rep = cand
+                            break
+                    reps[key] = rep if rep is not None else key
+            for y in range(self.h):
+                for x in range(self.w):
+                    r, g, b, a = px[x, y]
+                    if a == 0:
+                        continue
+                    rep = reps[(r, g, b)]
+                    if rep != (r, g, b):
+                        px[x, y] = (rep[0], rep[1], rep[2], a)
+        if self.palette:
+            self._pal_rgb = set(p[:3] for p in self.palette)
+        return self
+
+    def dehalo(self, sat_floor=0.10, val_floor=0.15, frames=None, layers=None):
+        """Detect opaque edge pixels that are color-contaminated by a former background
+        (low-saturation ring from AA against white/dark bg) and snap them toward the
+        average of their opaque neighbors. Conservative: only touches low-saturation edge px."""
+        for fi, ln, cel in self._iter_cels(frames, layers):
+            px = cel.load()
+            todo = []
+            for y in range(self.h):
+                for x in range(self.w):
+                    r, g, b, a = px[x, y]
+                    if a < 255:
+                        continue
+                    is_edge = False
+                    nab = []
+                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        nx, ny = x + dx, y + dy
+                        if 0 <= nx < self.w and 0 <= ny < self.h:
+                            nr, ng, nb, na = px[nx, ny]
+                            if na == 0:
+                                is_edge = True
+                            else:
+                                nab.append((nr, ng, nb))
+                        else:
+                            is_edge = True
+                    if not is_edge or not nab:
+                        continue
+                    hh, ss, vv = _rgb_to_hsv(r, g, b)
+                    if ss > sat_floor or vv < val_floor or vv > (1 - val_floor):
+                        continue   # only wash out low-sat edge contamination
+                    avg = tuple(sum(c[i] for c in nab) // len(nab) for i in range(3))
+                    todo.append((x, y, avg))
+            for x, y, avg in todo:
+                _, _, _, a = px[x, y]
+                px[x, y] = (avg[0], avg[1], avg[2], a)
+        return self
+
+    def clean(self, palette=None, max_colors=None, dither=False,
+              harden=True, harden_steps=None, despeckle_min=2, dedupe_tol=10,
+              dehalo=False, flatten=True):
+        """Full cleanup pipeline for imported/generated art. Order matters:
+
+            flatten → harden alpha → despeckle → dedupe colors → dehalo → palette lock
+
+        - harden: kill AA fuzz + bg halos (set False only for painterly alpha art).
+        - despeckle_min: remove orphan clusters smaller than this (2 = single pixels).
+        - dedupe_tol: merge near-duplicate colors within this channel distance.
+        - palette: lock to a named/learned palette (cross-asset consistency). Needs >=1 frame.
+        - max_colors: if no palette, reduce to N colors chosen from the art itself.
+        Run stats() before/after to see colors_used + semi_alpha collapse."""
+        if flatten:
+            self.flatten()
+        if harden:
+            self.harden_alpha(steps=harden_steps)
+        if despeckle_min and despeckle_min > 1:
+            self.despeckle(min_cluster=despeckle_min)
+        if dedupe_tol:
+            self.dedupe_colors(tol=dedupe_tol)
+        if dehalo:
+            self.dehalo()
+        if palette:
+            self.to_palette(palette, dither=dither)
+        elif max_colors:
+            self.quantize(max_colors, dither=dither)
+        return self
+
+    def before_after(self, path, scale=6, bg="checker"):
+        """Side-by-side contact sheet: requires the sprite to carry a ._orig snapshot
+        (set by pixelpipe). Falls back to current-only if absent."""
+        orig = getattr(self, "_orig", None)
+        cur = self.composite(self.current_frame)
+        arts = [("input", orig), ("cleaned", cur)] if orig is not None else [("frame", cur)]
+        n = len(arts)
+        cw, chh = self.w * scale, self.h * scale
+        sep = 6
+        W = n * cw + (n + 1) * sep
+        H = chh + 16 + 2 * sep
+        sheet = Image.new("RGB", (W, H), (90, 90, 90))
+        font = ImageFont.load_default()
+        for i, (label, im) in enumerate(arts):
+            ox = sep + i * (cw + sep)
+            ImageDraw.Draw(sheet).text((ox + 3, 2), label, fill=(240, 240, 240), font=font)
+            cbg = (self._checker_bg(cw, chh) if bg == "checker"
+                   else Image.new("RGB", (cw, chh), hex2rgba(bg)[:3])).convert("RGBA")
+            cbg.alpha_composite(self._scaled(im, scale))
+            sheet.paste(cbg.convert("RGB"), (ox, 16))
+        _mkdirs(path)
+        sheet.save(path)
+        print("before/after -> %s" % path)
+        return self
+
     # ---------------- animation ----------------
 
     def set_duration(self, ms, frames=None):
@@ -1054,15 +1239,36 @@ class Sprite:
         return sp
 
     @classmethod
-    def from_png(cls, path, scale="auto", max_colors=None):
-        """Import art. scale='auto' detects integer upscaling and recovers true pixels."""
+    def from_png(cls, path, scale="auto", max_colors=None, strip_bg=False):
+        """Import art and recover true pixels.
+
+        scale: 'auto' (detect; falls back to run-length estimate for sloppy upscales),
+        an int, or a float (forced block sampling — best for resampled model output).
+        strip_bg: remove baked-in checkerboard before processing.
+        max_colors: quantize to N colors after import.
+        """
         im = Image.open(path).convert("RGBA")
-        s = detect_scale(im) if scale == "auto" else max(1, int(scale))
+        if strip_bg:
+            im = strip_checker(im)
+        if scale == "auto":
+            s = detect_scale(im)
+            method = "nearest"
+            if s == 1:
+                est = estimate_scale(im)
+                if est > 1:
+                    s = est
+                    method = "block"   # non-integer / resampled -> block-center recovery
+        else:
+            s = float(scale)
+            method = "block" if not s.is_integer() else "nearest"
+            s = max(1, int(round(s)))
         if s > 1:
-            im = im.resize((im.width // s, im.height // s), NEAREST)
+            im = (im.resize((im.width // s, im.height // s), NEAREST) if method == "nearest"
+                  else block_downscale(im, s))
         sp = cls(im.width, im.height)
         sp.frames[0].cels["main"] = im
         sp.detected_scale = s
+        sp.import_method = method
         if max_colors:
             sp.quantize(max_colors, dither=False)
         return sp
@@ -1107,6 +1313,51 @@ def detect_scale(im):
     return 1
 
 
+def estimate_scale(im):
+    """Median run-length of similar colors — for sloppy/resampled upscales where
+    detect_scale() gives up (returns 1). Robust to non-integer scales and AA blur."""
+    p = im.load()
+    out = []
+    for y in range(0, im.height, 7):
+        run = 1
+        for x in range(1, im.width):
+            a, b = p[x - 1, y], p[x, y]
+            if max(abs(a[i] - b[i]) for i in range(3)) < 24:
+                run += 1
+            else:
+                if 1 < run < 40:
+                    out.append(run)
+                run = 1
+    out.sort()
+    return out[len(out) // 2] if out else 1
+
+
+def block_downscale(im, s):
+    """Sample block centers at scale s (survives sloppy/resampled upscales, unlike NEAREST
+    resize which produces mixels on non-integer scales)."""
+    w, h = im.size
+    tw, th = round(w / s), round(h / s)
+    small = Image.new("RGBA", (tw, th))
+    sp, px = small.load(), im.load()
+    for ty in range(th):
+        for tx in range(tw):
+            sp[tx, ty] = px[min(w - 1, int((tx + 0.5) * s)), min(h - 1, int((ty + 0.5) * s))]
+    return small
+
+
+def strip_checker(im):
+    """Remove a baked-in light-gray checkerboard background (common in AI-gen exports).
+    Returns a new image."""
+    out = im.convert("RGBA").copy()
+    px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if a > 0 and abs(r - g) < 14 and abs(g - b) < 26 and r > 185 and b > 160:
+                px[x, y] = (0, 0, 0, 0)
+    return out
+
+
 def upscale_png(src, dst, scale):
     """Integer-upscale an existing PNG (nearest neighbor)."""
     im = Image.open(src)
@@ -1115,5 +1366,5 @@ def upscale_png(src, dst, scale):
 
 
 __all__ = ["Sprite", "PALETTES", "ramp", "mix", "hex2rgba", "rgba2hex",
-           "nearest", "detect_scale", "upscale_png",
-           "BAYER2", "BAYER4", "BAYER8"]
+           "nearest", "detect_scale", "estimate_scale", "block_downscale",
+           "strip_checker", "upscale_png", "BAYER2", "BAYER4", "BAYER8"]

@@ -28,7 +28,8 @@ from collections import Counter, OrderedDict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
-from pixelstudio import NEAREST, detect_scale, rgba2hex  # noqa: E402
+from pixelstudio import (NEAREST, detect_scale, rgba2hex,  # noqa: E402
+                         estimate_scale, block_downscale, strip_checker)
 
 LEARNED_DIR = os.path.normpath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "references", "learned"))
@@ -38,51 +39,10 @@ def luminance(c):
     return (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255.0
 
 
-def strip_checker(im):
-    """Remove a baked-in light-gray checkerboard background."""
-    px = im.load()
-    for y in range(im.height):
-        for x in range(im.width):
-            r, g, b, a = px[x, y]
-            if a > 0 and abs(r - g) < 14 and abs(g - b) < 26 and r > 185 and b > 160:
-                px[x, y] = (0, 0, 0, 0)
-    return im
-
-
-def estimate_scale(im):
-    """Median run-length of similar colors — for non-integer/resampled upscales."""
-    p = im.load()
-    out = []
-    for y in range(0, im.height, 7):
-        run = 1
-        for x in range(1, im.width):
-            a, b = p[x - 1, y], p[x, y]
-            if max(abs(a[i] - b[i]) for i in range(3)) < 24:
-                run += 1
-            else:
-                if run < 40:
-                    out.append(run)
-                run = 1
-    out.sort()
-    return out[len(out) // 2] if out else 1
-
-
-def block_downscale(im, s):
-    """Sample block centers (survives sloppy/resampled upscales, unlike NEAREST resize)."""
-    w, h = im.size
-    tw, th = round(w / s), round(h / s)
-    small = Image.new("RGBA", (tw, th))
-    sp, px = small.load(), im.load()
-    for ty in range(th):
-        for tx in range(tw):
-            sp[tx, ty] = px[min(w - 1, int((tx + 0.5) * s)), min(h - 1, int((ty + 0.5) * s))]
-    return small
-
-
 def analyze(path, force_scale=None, do_strip=False):
     im = Image.open(path).convert("RGBA")
     if do_strip:
-        strip_checker(im)
+        im = strip_checker(im)
     if force_scale:
         scale = force_scale
         true = block_downscale(im, scale) if scale > 1 else im

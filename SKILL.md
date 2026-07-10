@@ -59,9 +59,10 @@ this is the masking system; the shifted-shape shading recipe in `references/tech
 | Draw | `px` `line` `rect(fill=)` `circle(cx,cy,r,fill=)` (pixel-perfect) `ellipse` `polygon` `contour` `fill(x,y)` `clear` `get(x,y)` `paste_png` |
 | Pixel-art ops | `outline(c, where="outside"/"inside")` · `mirror_x` `mirror_y` · `shift(dx,dy,wrap=)` · `replace(old,new)` · `dither(box,c1,c2,mix,pattern)` · `gradient_dither(box,colors)` · `noise(box,c,density,seed)` |
 | Color | `ramp(base, steps, hue_shift)` · `mix(c1,c2,t)` · `PALETTES` · `s.set_palette(p, remap=)` · `s.to_palette(p, dither=)` · `s.quantize(n)` |
+| Cleanup (gen/messy art) | `s.harden_alpha(threshold, steps)` · `s.despeckle(min_cluster)` · `s.dedupe_colors(tol)` · `s.dehalo()` · `s.clean(palette=, max_colors=, ...)` · `s.before_after(path)` |
 | Animation | `s.add_frame(copy=True)` · `s.set_duration(ms, frames)` · `s.tag(name, from, to, direction)` · `s.copy_cel(layer, from_frame, to_frames, link=)` · `s.del_frame` |
 | Inspect | `s.preview(path, scale, grid=, labels=)` · `s.zoom(path, x0,y0,x1,y1)` · `s.save_silhouette(path)` · `s.stats()` · `s.save_swatch(path)` · `s.used_colors()` |
-| Export | `s.save_png(path, frame, scale, bg)` · `s.save_gif(path, scale, tag, bg)` · `s.save_spritesheet(path, layout, scale, padding)` (+engine JSON) · `s.save_project` / `Sprite.load_project` / `Sprite.from_png(path, scale="auto")` |
+| Export | `s.save_png(path, frame, scale, bg)` · `s.save_gif(path, scale, tag, bg)` · `s.save_spritesheet(path, layout, scale, padding)` (+engine JSON) · `s.save_project` / `Sprite.load_project` / `Sprite.from_png(path, scale="auto", strip_bg=)` |
 
 ## Knowledge routing
 
@@ -72,6 +73,7 @@ this is the masking system; the shifted-shape shading recipe in `references/tech
 | Animation (frame counts, timing tables, cycles, part-per-layer puppeting) | `references/animation.md` |
 | Palette choice, budgets, presets, learned palettes | `references/palettes.md` |
 | Export formats, engines (Unity/Godot/Phaser) | `references/export.md` |
+| Cleaning AI-generated / messy art, palette-locking, the hybrid pipeline | `references/cleanup.md` |
 | Known failure modes — read before finalizing | `references/sharp_edges.md` |
 | Per-iteration critique checklist | `references/validations.md` |
 | Studied styles from user-provided art | `references/learned/INDEX.md` |
@@ -91,6 +93,25 @@ When the user sends a pixel-art file to learn from (เรียนรู้/ศ
 5. `--save-palette <name>` makes the palette available forever as `Sprite(palette="<name>")`.
 
 When later creating art in a studied style: open the matching card and follow its rules.
+
+## Hybrid pipeline — from generated/messy art (the "B" path)
+
+When the user wants pixel art from an **image model** (codex-imagegen, SD+LoRA, FLUX, PixelLab
+export, a screenshot, or any messy PNG), this skill is the deterministic cleanup + lock + animate
+layer. Use `references/cleanup.md` for the full playbook. One command does the whole import→clean:
+
+```bash
+python3 <skill>/scripts/pixelpipe.py <gen.png> --strip-checker --max-colors 24 --display 6
+# lock to a shared game palette for cross-asset consistency:
+python3 <skill>/scripts/pixelpipe.py <gen.png> --palette my_game
+# learn the style while cleaning:
+python3 <skill>/scripts/pixelpipe.py <gen.png> --strip-checker --study knight_style
+```
+
+It recovers the true grid (block-sampling for sloppy upscales), strips baked-in checkerboards,
+hardens alpha, despeckles, dedupes colors, locks the palette, and emits `clean.png` + a
+regenerable `build.py` you keep editing. After cleaning, switch back to the normal Loop
+(edit/animate/palette-swap deterministically) — that's where the skill beats the generator.
 
 ## Conventions
 
