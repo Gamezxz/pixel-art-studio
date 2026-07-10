@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Art Studio — Claude draws every pixel itself</title>
+<meta name="description" content="An Agent Skill that turns Claude into a pixel artist. No Aseprite, no MCP, no diffusion — every pixel is a decision.">
+<meta property="og:title" content="Pixel Art Studio — an Agent Skill">
+<meta property="og:description" content="Claude designs and places every pixel through Python/Pillow, critiques its own render, and iterates until it ships.">
+<meta property="og:image" content="https://gamezxz.github.io/pixel-art-studio/assets/witch.png">
+<style>
+  :root{
+    --bg:#faf6ef; --ink:#2a2622; --coral:#e05d38; --coral-dark:#b8492b;
+    --card:#fffdf8; --line:#e8e0d2; --code:#f4ede0; --dim:#7a7267;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px}
+  header{padding:72px 0 40px;text-align:center}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(34px,6vw,56px);line-height:1.1;margin-bottom:16px}
+  h1 .px{color:var(--coral)}
+  .tagline{font-size:20px;color:var(--dim);max-width:620px;margin:0 auto 28px}
+  .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:12px 26px;border-radius:10px;text-decoration:none;font-weight:600}
+  .btn-main{background:var(--coral);color:#fff}
+  .btn-main:hover{background:var(--coral-dark)}
+  .btn-ghost{border:2px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--coral)}
+  .gallery{display:flex;gap:20px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:36px 0 8px}
+  .gallery figure{text-align:center}
+  .gallery img{image-rendering:pixelated;background:
+    repeating-conic-gradient(#eee8db 0 25%,#f7f2e8 0 50%) 0 0/16px 16px;
+    border:1px solid var(--line);border-radius:8px;padding:10px}
+  .gallery figcaption{font-size:13px;color:var(--dim);margin-top:8px}
+  .note{text-align:center;color:var(--dim);font-size:15px;font-style:italic;padding-bottom:12px}
+  section{padding:44px 0;border-top:1px solid var(--line)}
+  h2{font-family:Georgia,serif;font-size:30px;margin-bottom:18px}
+  h2 span{color:var(--coral)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
+  .card h3{font-size:17px;margin-bottom:8px}
+  .card p{font-size:15px;color:var(--dim)}
+  .card .emoji{font-size:26px;display:block;margin-bottom:10px}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:20px;
+      overflow-x:auto;font:14px/1.55 "SF Mono",Menlo,monospace;margin-top:18px}
+  .cmt{color:#8a8171}.str{color:#b8492b}.kw{color:#4a6741;font-weight:600}
+  .loop{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;
+        font-size:15px;font-weight:600}
+  .step small{display:block;font-weight:400;color:var(--dim);font-size:13px}
+  .arrow{align-self:center;color:var(--coral);font-weight:700}
+  footer{padding:44px 0 60px;text-align:center;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
+  footer a{color:var(--coral)}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1>🎨 Pixel Art <span class="px">Studio</span></h1>
+  <p class="tagline">An Agent Skill that makes Claude a pixel artist.
+  No Aseprite. No MCP server. No diffusion. <strong>Every pixel is a decision.</strong></p>
+  <div class="btns">
+    <a class="btn btn-main" href="https://github.com/Gamezxz/pixel-art-studio">Get it on GitHub</a>
+    <a class="btn btn-ghost" href="#how">How it works</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="gallery">
+    <figure><img src="assets/witch.png" height="230" alt="forest witch"><figcaption>forest witch 42×64 — learned style</figcaption></figure>
+    <figure><img src="assets/dragon.png" height="230" alt="dragon boss"><figcaption>dragon boss 64×64</figcaption></figure>
+    <figure><img src="assets/slime.gif" height="150" alt="slime animation"><figcaption>slime idle — 4 frames</figcaption></figure>
+  </div>
+  <p class="note">All drawn pixel-by-pixel by Claude from text prompts — including the animation.</p>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <h2>The quality engine: <span>see → critique → fix</span></h2>
+    <p>Claude writes a Python build script that draws the art, renders a preview,
+    <strong>looks at the image with its own vision</strong>, critiques it against a
+    professional checklist (silhouette, light source, banding, orphan pixels, palette
+    discipline…), edits the script and re-renders. Minimum 2–3 passes before shipping.</p>
+    <div class="loop">
+      <div class="step">1 · Brief<small>size, palette budget, light</small></div><div class="arrow">→</div>
+      <div class="step">2 · Build script<small>parametric drawing code</small></div><div class="arrow">→</div>
+      <div class="step">3 · Render<small>contact-sheet preview</small></div><div class="arrow">→</div>
+      <div class="step">4 · LOOK<small>Claude reads its own render</small></div><div class="arrow">→</div>
+      <div class="step">5 · Fix<small>edit code, repeat</small></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What's <span>inside</span></h2>
+    <div class="grid">
+      <div class="card"><span class="emoji">✍️</span><h3>pixelstudio.py</h3>
+        <p>Frames × layers engine: pixel-perfect primitives, palette locking, hue-shifted ramps,
+        Bayer dithering, selective outlines, masked painting via <code>only=</code>.</p></div>
+      <div class="card"><span class="emoji">🔍</span><h3>study.py</h3>
+        <p>Learns from reference art: recovers true resolution from sloppy upscales, strips baked-in
+        checkerboards, extracts palettes, ramps and technique stats.</p></div>
+      <div class="card"><span class="emoji">📚</span><h3>Knowledge base</h3>
+        <p>Proportions, silhouette-first workflow, shading & color theory, animation timing tables,
+        retro palettes (Game Boy, PICO-8, C64…), engine export guides.</p></div>
+      <div class="card"><span class="emoji">🧠</span><h3>It grows</h3>
+        <p>Study an image → Claude writes an imperative style card → those rules and palettes apply
+        to every future artwork. The witch was drawn from one learned card.</p></div>
+      <div class="card"><span class="emoji">🎞️</span><h3>Real deliverables</h3>
+        <p>1x PNG masters, animated GIFs with proper transparency, spritesheets with
+        Aseprite-compatible JSON for Unity / Godot / Phaser.</p></div>
+      <div class="card"><span class="emoji">♻️</span><h3>Deterministic</h3>
+        <p>The build script <em>is</em> the artwork — diffable, re-renderable, animation frames are
+        function calls, not hand-copied pixels.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Ten lines to a <span>shaded sprite</span></h2>
+<pre><span class="kw">from</span> pixelstudio <span class="kw">import</span> Sprite, ramp
+
+BODY = ramp(<span class="str">"#38b764"</span>, 5)                 <span class="cmt"># hue-shifted 5-step ramp</span>
+s = Sprite(32, 32, palette=BODY + [<span class="str">"#1a1c2c"</span>])
+
+s.ellipse(6, 12, 25, 27, BODY[0])                <span class="cmt"># darkest = silhouette</span>
+s.ellipse(5, 11, 23, 26, BODY[2], only=<span class="str">"opaque"</span>) <span class="cmt"># restack lighter, toward light</span>
+s.outline(BODY[0], where=<span class="str">"inside"</span>)              <span class="cmt"># selective outline</span>
+
+s.preview(<span class="str">"preview.png"</span>, scale=10)   <span class="cmt"># Claude LOOKS at this</span>
+s.save_gif(<span class="str">"out.gif"</span>, scale=6)</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Get <span>started</span></h2>
+<pre>git clone https://github.com/Gamezxz/pixel-art-studio.git
+cp -r pixel-art-studio ~/.claude/skills/pixel-art-studio
+pip3 install pillow</pre>
+    <p style="margin-top:16px">Then ask Claude Code: <em>"draw a 64×64 dragon boss"</em> ·
+    <em>"make a 4-frame slime idle animation"</em> · <em>"study this sprite and learn its style"</em></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    MIT © <a href="https://github.com/Gamezxz">Gamezxz</a> · built with
+    <a href="https://claude.com/claude-code">Claude Code</a> — and yes, Claude drew everything on this page
+  </div>
+</footer>
+
+</body>
+</html>
