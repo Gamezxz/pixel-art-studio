@@ -109,6 +109,27 @@
   <p class="note">A chibi cast in a style Claude <em>studied</em> from reference art (see the learned card), generated as sheets and locked onto shared palettes by <code>pixelpipe</code> — the slime's bounce cycle included, with true GIF transparency.</p>
 </div>
 
+<section id="fourdir">
+  <div class="wrap">
+    <h2>From one reference photo: <span>a 4-direction walk</span></h2>
+    <p>Show Claude a character image and ask for a game-ready sprite: it studies the reference,
+    draws a parametric 32×32 chibi from scratch (one draw function per view), and generates a
+    contact-passing walk cycle for all four directions — <strong>12 colors, one build script,
+    zero diffusion</strong>.</p>
+    <div class="anim">
+      <div class="anim-row">
+        <figure><img src="assets/capy_walk_down.gif" height="150" alt="capybara walk down"><figcaption>down</figcaption></figure>
+        <figure><img src="assets/capy_walk_left.gif" height="150" alt="capybara walk left"><figcaption>left</figcaption></figure>
+        <figure><img src="assets/capy_walk_right.gif" height="150" alt="capybara walk right"><figcaption>right</figcaption></figure>
+        <figure><img src="assets/capy_walk_up.gif" height="150" alt="capybara walk up"><figcaption>up</figcaption></figure>
+      </div>
+      <p class="demo-cap">a capybara with a sprout &amp; scarf, from a reference photo → 4 directions ×
+      4-frame walk, 140ms/frame · spritesheet + engine JSON included ·
+      regenerate with <code>python3 examples/capybara-4dir.py</code></p>
+    </div>
+  </div>
+</section>
+
 <section id="hybrid">
   <div class="wrap">
     <h2>Or clean AI-generated art: <span>the hybrid pipeline</span></h2>
