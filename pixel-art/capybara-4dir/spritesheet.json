@@ -1,0 +1,14 @@
+{
+  "frame": {
+    "w": 32,
+    "h": 32
+  },
+  "ms_per_frame": 140,
+  "rows": {
+    "down": 0,
+    "left": 1,
+    "right": 2,
+    "up": 3
+  },
+  "frames_per_row": 4
+}

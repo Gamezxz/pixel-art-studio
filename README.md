@@ -57,6 +57,20 @@ Then just ask Claude Code: *"draw a 64x64 dragon boss"*, *"make a 4-frame slime 
 | `references/*.md` | The knowledge: proportions & silhouette-first workflow, color/shading/dithering/AA techniques, animation timing tables, palette presets (Game Boy, PICO-8, Sweetie16, C64, Endesga32), export/engine guides, failure modes, and the per-iteration critique checklist |
 | `references/learned/` | The skill grows: study a reference image → write a style card → its rules and palette become available for future artwork |
 | `examples/slime-build.py` | A complete worked example: parametric character, 4-frame idle animation, all export paths |
+| `examples/capybara-4dir.py` | 4-direction character (down/left/right/up) with a 4-frame walk cycle per direction — one parametric draw function per view, spritesheet + engine JSON + per-direction GIFs |
+
+### 4-direction walk example
+
+<p align="center">
+  <img src="docs/assets/capy_walk_down.gif" height="120" alt="capybara walk down">
+  <img src="docs/assets/capy_walk_left.gif" height="120" alt="capybara walk left">
+  <img src="docs/assets/capy_walk_right.gif" height="120" alt="capybara walk right">
+  <img src="docs/assets/capy_walk_up.gif" height="120" alt="capybara walk up">
+</p>
+
+*A chibi capybara (sprout + scarf, from a reference photo the skill studied) — 32×32/frame,
+12 colors, contact-passing walk construction. Regenerate everything with
+`python3 examples/capybara-4dir.py`.*
 
 ## The workflow
 
