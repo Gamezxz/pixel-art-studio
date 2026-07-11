@@ -58,6 +58,22 @@ Then just ask Claude Code: *"draw a 64x64 dragon boss"*, *"make a 4-frame slime 
 | `references/learned/` | The skill grows: study a reference image → write a style card → its rules and palette become available for future artwork |
 | `examples/slime-build.py` | A complete worked example: parametric character, 4-frame idle animation, all export paths |
 | `examples/capybara-4dir.py` | 4-direction character (down/left/right/up) with a 4-frame walk cycle per direction — one parametric draw function per view, spritesheet + engine JSON + per-direction GIFs |
+| `examples/anime-cast.py` | Ten diverse characters in one script — ghost, mushroom, robot, cat mage, skeleton, flame spirit, frog, penguin, bee, moss golem — each a ~20-line function with its own palette and 3-frame idle loop |
+
+### The cast
+
+<p align="center">
+  <img src="docs/assets/cast_ghost.gif" height="80" alt="ghost">
+  <img src="docs/assets/cast_mushroom.gif" height="80" alt="mushroom">
+  <img src="docs/assets/cast_robot.gif" height="80" alt="robot">
+  <img src="docs/assets/cast_catmage.gif" height="80" alt="cat mage">
+  <img src="docs/assets/cast_skeleton.gif" height="80" alt="skeleton">
+  <img src="docs/assets/cast_flame.gif" height="80" alt="flame spirit">
+  <img src="docs/assets/cast_frog.gif" height="80" alt="frog">
+  <img src="docs/assets/cast_penguin.gif" height="80" alt="penguin">
+  <img src="docs/assets/cast_bee.gif" height="80" alt="bee">
+  <img src="docs/assets/cast_golem.gif" height="80" alt="moss golem">
+</p>
 
 ### 4-direction walk example
 
