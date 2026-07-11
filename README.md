@@ -75,6 +75,17 @@ on one 832×1344 sheet + engine JSON. Poses are authored once in a small coordin
 drawn through a margin-canvas translator (`references/lpc.md`) so a long weapon never clips
 mid-swing.*
 
+### Learned tactical-chibi construction
+
+<p align="center">
+  <img src="docs/assets/tactical_oracle_idle.gif" height="220" alt="original tactical chibi oracle idle">
+</p>
+
+*The original Verdant Oracle applies a studied tactical-chibi design card: layered cloth,
+selective warm trim, 3/4 depth through overlap/value/scale, and explicit anatomy validation so
+the far eye and arm remain readable instead of accidentally disappearing. Regenerate it with
+`python3 examples/tactical-verdant-oracle.py`.*
+
 ### The cast
 
 <p align="center">

@@ -1,0 +1,111 @@
+{
+ "frames": [
+  {
+   "filename": "frame_0",
+   "frame": {
+    "x": 2,
+    "y": 2,
+    "w": 64,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 58
+   },
+   "duration": 260
+  },
+  {
+   "filename": "frame_1",
+   "frame": {
+    "x": 68,
+    "y": 2,
+    "w": 64,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 58
+   },
+   "duration": 220
+  },
+  {
+   "filename": "frame_2",
+   "frame": {
+    "x": 134,
+    "y": 2,
+    "w": 64,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 58
+   },
+   "duration": 90
+  },
+  {
+   "filename": "frame_3",
+   "frame": {
+    "x": 200,
+    "y": 2,
+    "w": 64,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 58
+   },
+   "duration": 220
+  }
+ ],
+ "meta": {
+  "app": "pixelstudio",
+  "version": "1.0.0",
+  "image": "tactical_oracle_sheet.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 266,
+   "h": 62
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "idle",
+    "from": 0,
+    "to": 3,
+    "direction": "pingpong"
+   }
+  ]
+ }
+}

@@ -63,6 +63,33 @@ build scripts are code; loops write animation for you.
 - Impact: hold the contact frame + shift the WHOLE sprite 1px (screen-shake substitute),
   or flash the palette light for 1 frame (`replace`).
 
+## Oversized attack frames and long weapons
+
+Do not force every action into the idle/walk cell. Size the canvas from the complete
+motion silhouette: character + weapon + trails/effects + a safety margin.
+
+- Keep locomotion cells compact when the body stays inside the normal footprint.
+- Before drawing an attack, block every key pose and measure the union bounding box of
+  all opaque pixels across the whole action. Include the weapon tip at maximum reach,
+  anticipation behind the body, follow-through, and any slash trail.
+- If that union exceeds the normal cell, create an oversized attack cell. Prefer one
+  fixed cell size for every frame within that attack tag; never resize individual frames,
+  because changing frame dimensions/origins makes the character jitter in-engine.
+- Add at least 2 px transparent safety margin at native resolution around the union box
+  (more for a fast weapon trail). Clipping even one spear/sword-tip pixel is a failed export.
+- Preserve a stable character anchor across actions: ground-contact pivot at the feet for
+  side/front views, or the established body-origin for top-down views. Expand transparent
+  space around that anchor instead of recentering each pose visually.
+- Store per-action metadata: `frame_w`, `frame_h`, and `pivot_x/pivot_y` (or trim offsets).
+  An atlas may mix compact locomotion regions and oversized attack regions; a rigid grid
+  may instead use the largest attack cell, accepting transparent space.
+- Judge reach from the weapon-tip arc, not only from body movement. Long weapons need
+  readable anticipation → fastest crossing → extended contact → follow-through poses.
+
+Pre-export validation: overlay all attack frames using the same pivot, confirm the feet/body
+anchor does not drift, then inspect every outer edge for opaque pixels touching the boundary.
+If any do, enlarge the action canvas and re-export.
+
 ## Loop hygiene
 
 - Watch the GIF for ≥3 loops: the seam frame N→1 must continue the motion, not reset it.

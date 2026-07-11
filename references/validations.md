@@ -8,6 +8,8 @@ Evidence: preview.png (scale 8–10), silhouette.png, stats() output, zoom() whe
 - [ ] at preview scale 4 (arm's-length 1x simulation) the subject is still identifiable
 - [ ] value contrast separates subject from intended background
 - [ ] internal shapes are clusters (3+ px), not noise
+- [ ] paired anatomy is accounted for: both eyes/arms/hands/legs/feet are readable, or any hidden part is deliberately occluded by the pose
+- [ ] in 3/4 view, far-side features read as smaller/darker forms—not as accidentally missing parts
 
 ## Light & color
 - [ ] ONE light source; top/lit surfaces lightest, consistent across all parts

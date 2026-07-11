@@ -70,7 +70,7 @@ this is the masking system; the shifted-shape shading recipe in `references/tech
 |---|---|
 | Any new artwork (sizes, proportions, silhouette-first order, tiles) | `references/patterns.md` |
 | Color ramps, shading, dithering, AA, outlines, textures | `references/techniques.md` |
-| Animation (frame counts, timing tables, cycles, part-per-layer puppeting) | `references/animation.md` |
+| Animation (frame counts, timing, puppeting, oversized attack cells, stable pivots) | `references/animation.md` |
 | **Humanoid characters (2 arms + 2 legs) — full movement set** (walk/slash/thrust/spellcast/shoot/hurt) | `references/lpc.md` + `scripts/lpc.py` — assemble frames onto the LPC universal sheet (engine-ready layout) |
 | Palette choice, budgets, presets, learned palettes | `references/palettes.md` |
 | Export formats, engines (Unity/Godot/Phaser) | `references/export.md` |
@@ -83,15 +83,26 @@ this is the masking system; the shifted-shape shading recipe in `references/tech
 
 When the user sends a pixel-art file to learn from (เรียนรู้/ศึกษาไฟล์นี้):
 
+**Persistence rule:** learning changes the skill project itself. Resolve `<skill>` to the
+directory containing this `SKILL.md` and write durable knowledge only inside that directory.
+The caller's working directory, `./pixel-art/`, clipboard paths, and `<file>_study/` are source
+or temporary analysis locations; they are not the knowledge base. Never leave a completed
+study only in those locations.
+
 1. `python3 <skill>/scripts/study.py <file> [--save-palette <name>]`
    → emits `<file>_study/` with `zoom.png`, `swatch.png`, `silhouette.png`, `report.json`.
 2. **Read zoom.png and swatch.png** — the report gives numbers (true size, palette, ramps,
    dither %, outline darkness); your eyes extract the *techniques*: cluster shapes, AA
    placement, where dither sits, how ramps map onto forms, outline behavior on the light side.
-3. Write a study card `references/learned/NNN-<slug>.md` from `references/learned/TEMPLATE.md`
+3. Write a study card `<skill>/references/learned/NNN-<slug>.md` from
+   `<skill>/references/learned/TEMPLATE.md`
    — record pixel-level observations and **imperative rules**, not vibes.
-4. Add one line to `references/learned/INDEX.md`.
-5. `--save-palette <name>` makes the palette available forever as `Sprite(palette="<name>")`.
+4. Add one line to `<skill>/references/learned/INDEX.md` in the same change.
+5. If the lesson generalizes beyond one visual style (animation, export, validation, cleanup,
+   etc.), also update the relevant `<skill>/references/*.md` rule file and Knowledge routing.
+6. `--save-palette <name>` makes the palette available forever as `Sprite(palette="<name>")`;
+   verify that the saved palette data is also under `<skill>`, not beside the input file.
+7. Before finishing, verify every newly learned durable file resolves under `<skill>`.
 
 When later creating art in a studied style: open the matching card and follow its rules.
 
