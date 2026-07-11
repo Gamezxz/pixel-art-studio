@@ -59,6 +59,21 @@ Then just ask Claude Code: *"draw a 64x64 dragon boss"*, *"make a 4-frame slime 
 | `examples/slime-build.py` | A complete worked example: parametric character, 4-frame idle animation, all export paths |
 | `examples/capybara-4dir.py` | 4-direction character (down/left/right/up) with a 4-frame walk cycle per direction — one parametric draw function per view, spritesheet + engine JSON + per-direction GIFs |
 | `examples/anime-cast.py` | Ten diverse characters in one script — ghost, mushroom, robot, cat mage, skeleton, flame spirit, frog, penguin, bee, moss golem — each a ~20-line function with its own palette and 3-frame idle loop |
+| `scripts/lpc.py` + `references/lpc.md` | **LPC universal sheet contract** for humanoids (2 arms, 2 legs): assembles frames onto the [Liberated Pixel Cup](https://liberatedpixelcup.github.io/Universal-LPC-Spritesheet-Character-Generator/) 64×64 grid (walk/slash/thrust/spellcast/shoot/hurt rows) so output drops into any LPC-aware engine template — only the layout is borrowed, every pixel is original |
+
+### LPC-compatible humanoids
+
+<p align="center">
+  <img src="docs/assets/catmage_walk_down.gif" height="110" alt="cat mage walk down">
+  <img src="docs/assets/catmage_slash_right.gif" height="110" alt="cat mage slash right">
+  <img src="docs/assets/knight_walk_right.gif" height="110" alt="knight walk right">
+  <img src="docs/assets/knight_slash_down.gif" height="110" alt="knight spear thrust">
+</p>
+
+*Cat mage and spear knight, each with idle + 8-frame walk and 6-frame slash × 4 directions,
+on one 832×1344 sheet + engine JSON. Poses are authored once in a small coordinate space and
+drawn through a margin-canvas translator (`references/lpc.md`) so a long weapon never clips
+mid-swing.*
 
 ### The cast
 

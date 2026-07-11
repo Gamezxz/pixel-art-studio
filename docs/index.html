@@ -109,6 +109,28 @@
   <p class="note">Drawn pixel-by-pixel from a build script — the capybara's 4-direction walk cycle came from a single reference photo, the slime's bounce with true GIF transparency.</p>
 </div>
 
+<section id="lpc">
+  <div class="wrap">
+    <h2>Engine-ready: <span>the LPC universal sheet</span></h2>
+    <p>For humanoids (2 arms, 2 legs) the skill targets the
+    <a href="https://liberatedpixelcup.github.io/Universal-LPC-Spritesheet-Character-Generator/">Liberated Pixel Cup</a>
+    grid — 64×64 cells, standard rows for walk/slash/thrust/spellcast/shoot/hurt —
+    so a build script's output drops straight into any LPC-aware engine template.
+    Only the layout convention is borrowed; every pixel below is drawn from scratch.</p>
+    <div class="anim">
+      <div class="anim-row">
+        <figure><img src="assets/catmage_walk_down.gif" height="130" alt="cat mage walk down"><figcaption>cat mage · walk</figcaption></figure>
+        <figure><img src="assets/catmage_slash_right.gif" height="130" alt="cat mage slash right"><figcaption>cat mage · slash</figcaption></figure>
+        <figure><img src="assets/knight_walk_right.gif" height="130" alt="knight walk right"><figcaption>knight · walk</figcaption></figure>
+        <figure><img src="assets/knight_slash_down.gif" height="130" alt="knight thrust down"><figcaption>knight · spear thrust</figcaption></figure>
+      </div>
+      <p class="demo-cap">each character: idle + 8-frame walk and 6-frame slash, ×4 directions, on one
+      832×1344 sheet + engine JSON — built with <code>scripts/lpc.py</code>, poses authored once and
+      translated onto a margin canvas so a long weapon never clips mid-swing.</p>
+    </div>
+  </div>
+</section>
+
 <section id="cast">
   <div class="wrap">
     <h2>Ten characters, <span>one prompt each</span></h2>
