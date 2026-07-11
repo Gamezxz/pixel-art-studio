@@ -68,7 +68,7 @@ this is the masking system; the shifted-shape shading recipe in `references/tech
 
 | Task | Read |
 |---|---|
-| Any new artwork (sizes, proportions, silhouette-first order, tiles) | `references/patterns.md` |
+| Any new artwork (sizes, chibi/heroic/tall-tactical proportions, silhouette-first order, tiles) | `references/patterns.md` |
 | Color ramps, shading, dithering, AA, outlines, textures | `references/techniques.md` |
 | Animation (frame counts, timing, puppeting, oversized attack cells, stable pivots) | `references/animation.md` |
 | **Humanoid characters (2 arms + 2 legs) — full movement set** (walk/slash/thrust/spellcast/shoot/hurt) | `references/lpc.md` + `scripts/lpc.py` — assemble frames onto the LPC universal sheet (engine-ready layout) |

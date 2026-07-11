@@ -86,6 +86,17 @@ selective warm trim, 3/4 depth through overlap/value/scale, and explicit anatomy
 the far eye and arm remain readable instead of accidentally disappearing. Regenerate it with
 `python3 examples/tactical-verdant-oracle.py`.*
 
+### Tall tactical proportions + dynamic attacks
+
+<p align="center">
+  <img src="docs/assets/tall_iron_man_repulsor.gif" height="240" alt="Iron Man fan-art repulsor animation in tall tactical pixel style">
+</p>
+
+*A fan-art test of the 48–64px `tall tactical` preset: 4–5-head anatomy, filled segmented
+arm armor, matching red/gold boots, stable ground pivot, and an oversized 120×72 attack cell
+computed from the full repulsor-beam silhouette. Regenerate with
+`python3 examples/tall-iron-man-repulsor.py`.*
+
 ### The cast
 
 <p align="center">

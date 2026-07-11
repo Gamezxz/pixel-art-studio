@@ -1,0 +1,155 @@
+{
+ "frames": [
+  {
+   "filename": "frame_0",
+   "frame": {
+    "x": 2,
+    "y": 2,
+    "w": 120,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 120,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 120,
+    "h": 72
+   },
+   "duration": 150
+  },
+  {
+   "filename": "frame_1",
+   "frame": {
+    "x": 124,
+    "y": 2,
+    "w": 120,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 120,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 120,
+    "h": 72
+   },
+   "duration": 90
+  },
+  {
+   "filename": "frame_2",
+   "frame": {
+    "x": 246,
+    "y": 2,
+    "w": 120,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 120,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 120,
+    "h": 72
+   },
+   "duration": 55
+  },
+  {
+   "filename": "frame_3",
+   "frame": {
+    "x": 368,
+    "y": 2,
+    "w": 120,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 120,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 120,
+    "h": 72
+   },
+   "duration": 60
+  },
+  {
+   "filename": "frame_4",
+   "frame": {
+    "x": 490,
+    "y": 2,
+    "w": 120,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 120,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 120,
+    "h": 72
+   },
+   "duration": 95
+  },
+  {
+   "filename": "frame_5",
+   "frame": {
+    "x": 612,
+    "y": 2,
+    "w": 120,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 120,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 120,
+    "h": 72
+   },
+   "duration": 140
+  }
+ ],
+ "meta": {
+  "app": "pixelstudio",
+  "version": "1.0.0",
+  "image": "tall_iron_man_beam_sheet.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 734,
+   "h": 76
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "repulsor",
+    "from": 0,
+    "to": 5,
+    "direction": "forward"
+   }
+  ]
+ }
+}

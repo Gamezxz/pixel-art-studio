@@ -19,6 +19,9 @@ and hurts readability. Leave a 1px transparent margin when using `outline(where=
 - **Chibi** (16–32px): head = 40–50% of height. Platformers/action. Huge readable head,
   stubby limbs, feet 1–2px tall.
 - **Heroic** (32–48px): head = 1/3 to 1/4 of height. Action-RPG standard.
+- **Tall tactical** (48–64px): head = 1/4 to 1/5 of height. Use 4–5-head anatomy,
+  a narrow waist, clearly extended legs, and slightly oversized hands/boots for readable
+  tactical-RPG jobs. Redraw joints for the taller body—never vertically stretch a chibi sprite.
 - **Realistic** (48px+): head = 1/6 to 1/8. RPG portraits, strategy units.
 
 32x32 chibi row budget (y coords): head 2–13 · torso 14–22 · legs 23–29 · ground/contact 29–31.
