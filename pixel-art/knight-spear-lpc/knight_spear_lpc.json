@@ -1,0 +1,77 @@
+{
+  "cell": 64,
+  "cols": 13,
+  "rows": 21,
+  "feet_baseline": 58,
+  "direction_order": [
+    "up",
+    "left",
+    "down",
+    "right"
+  ],
+  "actions": {
+    "spellcast": {
+      "frames": 7,
+      "row": 0,
+      "dirs": [
+        "up",
+        "left",
+        "down",
+        "right"
+      ],
+      "ms_per_frame": 100
+    },
+    "thrust": {
+      "frames": 8,
+      "row": 4,
+      "dirs": [
+        "up",
+        "left",
+        "down",
+        "right"
+      ],
+      "ms_per_frame": 90
+    },
+    "walk": {
+      "frames": 9,
+      "row": 8,
+      "dirs": [
+        "up",
+        "left",
+        "down",
+        "right"
+      ],
+      "ms_per_frame": 90
+    },
+    "slash": {
+      "frames": 6,
+      "row": 12,
+      "dirs": [
+        "up",
+        "left",
+        "down",
+        "right"
+      ],
+      "ms_per_frame": 80
+    },
+    "shoot": {
+      "frames": 13,
+      "row": 16,
+      "dirs": [
+        "up",
+        "left",
+        "down",
+        "right"
+      ],
+      "ms_per_frame": 70
+    },
+    "hurt": {
+      "frames": 6,
+      "row": 20,
+      "dirs": [
+        "down"
+      ],
+      "ms_per_frame": 110
+    }
+  }
+}
