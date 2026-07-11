@@ -47,6 +47,46 @@ characters — a sword hand breaks that. Weapon in the same hand in every direct
 - **shoot**: hold 4–8 readable (this is what the eye sees); loose is 2 frames max.
 - **hurt**: last frame must read lying flat — engines hold it as the death pose.
 
+## Avoid weapon clipping: draw on a margin canvas, not the bare cell
+
+A long weapon (spear, staff, bow) swung through its arc reaches well outside the
+character's own silhouette — sometimes at negative coordinates relative to where
+the body was authored. If you draw straight onto a Sprite sized to the body, those
+reaching frames get silently clipped at the canvas edge (a spear tip or staff orb
+vanishes mid-swing). **The character's own size must stay exactly the same** —
+only the scratch canvas gets bigger, so nothing you already tuned has to be
+redrawn.
+
+Fix: draw through a coordinate-translating wrapper onto a generous scratch
+canvas (e.g. 96×96), keeping every pose's numbers in the original small
+coordinate space (e.g. 0..40) you authored them in:
+
+```python
+OFFX, OFFY, SCRATCH = 28, 26, 96
+
+class Canvas:
+    """Translates every call by (OFFX, OFFY) so reaching poses never clip."""
+    def __init__(self, w, h): self.s = Sprite(w, h)
+    def px(self, x, y, c, only=None): self.s.px(x+OFFX, y+OFFY, c, only=only)
+    def line(self, x0,y0,x1,y1,c,only=None):
+        self.s.line(x0+OFFX,y0+OFFY,x1+OFFX,y1+OFFY,c,only=only)
+    def rect(self, x0,y0,x1,y1,c,fill=True,only=None):
+        self.s.rect(x0+OFFX,y0+OFFY,x1+OFFX,y1+OFFY,c,fill=fill,only=only)
+    def ellipse(self, x0,y0,x1,y1,c,fill=True,only=None):
+        self.s.ellipse(x0+OFFX,y0+OFFY,x1+OFFX,y1+OFFY,c,fill=fill,only=only)
+    def polygon(self, pts, c, fill=True, only=None):
+        self.s.polygon([(x+OFFX,y+OFFY) for x,y in pts], c, fill=fill, only=only)
+    def outline(self, c, where="outside", diagonals=False):
+        self.s.outline(c, where=where, diagonals=diagonals)
+    def composite(self, frame=None): return self.s.composite(frame)
+```
+
+Use `Canvas(SCRATCH, SCRATCH)` in place of `Sprite(W, H)` when rendering each
+frame; `LPCSheet.place()` crops the tight bbox and centers it in the real 64px
+cell, so the extra scratch margin costs nothing in the final sheet. If a pose's
+total reach still exceeds 64px, `place()` raises `ValueError` — a legitimate
+signal to shorten that pose, not a bug to silence.
+
 ## Workflow
 
 1. Draw the character parametrically in pixelstudio as usual (32×32 or 64×64).

@@ -10,7 +10,13 @@ from pixelstudio import Sprite, ramp
 from lpc import LPCSheet
 from PIL import Image
 
-W = H = 40
+# All body/pose coordinates below are unchanged (same character size). We just
+# draw them onto a bigger scratch canvas, translated by OFFX/OFFY, so a staff
+# reaching far left/up/right never gets clipped by an undersized canvas. lpc.py
+# then crops the tight bbox and centers it in the real 64px cell.
+W = H = 40                      # logical coordinate space the poses were authored in
+OFFX, OFFY = 28, 26
+SCRATCH = 96
 OUT = "#2b1e21"
 HAT = ramp("#6b4f9e", 3)
 CAT = ["#8b8f9c", "#c0c4cf", "#e3e6ee"]
@@ -18,6 +24,35 @@ STAR = "#f7d060"
 WOOD = ["#6e4a2e", "#96683f"]
 ORB = ["#2e8f88", "#59c8c0", "#b7ece6"]
 PINK = "#e89a9a"
+
+
+class Canvas:
+    """Translates every draw call by (OFFX, OFFY) onto a larger scratch Sprite,
+    so build code below can keep authoring in its original 0..40 coordinate
+    space without any pose reaching a negative or off-canvas value."""
+    def __init__(self, w, h):
+        self.s = Sprite(w, h)
+
+    def px(self, x, y, color, only=None):
+        self.s.px(x + OFFX, y + OFFY, color, only=only)
+
+    def line(self, x0, y0, x1, y1, color, only=None):
+        self.s.line(x0 + OFFX, y0 + OFFY, x1 + OFFX, y1 + OFFY, color, only=only)
+
+    def rect(self, x0, y0, x1, y1, color, fill=True, only=None):
+        self.s.rect(x0 + OFFX, y0 + OFFY, x1 + OFFX, y1 + OFFY, color, fill=fill, only=only)
+
+    def ellipse(self, x0, y0, x1, y1, color, fill=True, only=None):
+        self.s.ellipse(x0 + OFFX, y0 + OFFY, x1 + OFFX, y1 + OFFY, color, fill=fill, only=only)
+
+    def polygon(self, points, color, fill=True, only=None):
+        self.s.polygon([(x + OFFX, y + OFFY) for x, y in points], color, fill=fill, only=only)
+
+    def outline(self, color, where="outside", diagonals=False):
+        self.s.outline(color, where=where, diagonals=diagonals)
+
+    def composite(self, frame=None):
+        return self.s.composite(frame)
 
 
 def staff(s, x0, y0, x1, y1, spark=0):
@@ -30,8 +65,7 @@ def staff(s, x0, y0, x1, y1, spark=0):
         for i in range(3):
             a = math.radians(i * 120 + spark * 45)
             sx, sy = int(x1 + 5 * math.cos(a)), int(y1 + 5 * math.sin(a))
-            if 0 <= sx < W and 0 <= sy < H:
-                s.px(sx, sy, ORB[2] if i % 2 else STAR)
+            s.px(sx, sy, ORB[2] if i % 2 else STAR)
 
 
 def body_down(s, y, hx=20, back=False, arm_l=(16, 26), arm_r=(24, 26)):
@@ -159,7 +193,7 @@ def slash_poses():
 
 
 def render(kind, pose):
-    s = Sprite(W, H)
+    s = Canvas(SCRATCH, SCRATCH)
     if kind == "down":
         frame_down(s, pose)
     elif kind == "up":

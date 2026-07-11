@@ -11,7 +11,13 @@ from pixelstudio import Sprite, ramp
 from lpc import LPCSheet
 from PIL import Image
 
-W = H = 40
+# All body/pose coordinates below are unchanged (same character size). We just
+# draw them onto a bigger scratch canvas, translated by OFFX/OFFY, so a spear
+# reaching far left/up/right never gets clipped by an undersized canvas. lpc.py
+# then crops the tight bbox and centers it in the real 64px cell.
+W = H = 40                      # logical coordinate space the poses were authored in
+OFFX, OFFY = 28, 26
+SCRATCH = 96
 OUT = "#231d1a"
 STEEL = ramp("#7c8896", 3)          # dark..light armor
 TRIM = ["#8a6a2e", "#c99a3e"]       # gold trim
@@ -20,6 +26,35 @@ PLUME = ramp("#b5342e", 3)
 WOOD = ["#6e4a2e", "#96683f"]
 SPEARHEAD = ["#8f97a0", "#d3dbe2"]
 SPARK = "#f2e6a8"
+
+
+class Canvas:
+    """Translates every draw call by (OFFX, OFFY) onto a larger scratch Sprite,
+    so build code below can keep authoring in its original 0..40 coordinate
+    space without any pose reaching a negative or off-canvas value."""
+    def __init__(self, w, h):
+        self.s = Sprite(w, h)
+
+    def px(self, x, y, color, only=None):
+        self.s.px(x + OFFX, y + OFFY, color, only=only)
+
+    def line(self, x0, y0, x1, y1, color, only=None):
+        self.s.line(x0 + OFFX, y0 + OFFY, x1 + OFFX, y1 + OFFY, color, only=only)
+
+    def rect(self, x0, y0, x1, y1, color, fill=True, only=None):
+        self.s.rect(x0 + OFFX, y0 + OFFY, x1 + OFFX, y1 + OFFY, color, fill=fill, only=only)
+
+    def ellipse(self, x0, y0, x1, y1, color, fill=True, only=None):
+        self.s.ellipse(x0 + OFFX, y0 + OFFY, x1 + OFFX, y1 + OFFY, color, fill=fill, only=only)
+
+    def polygon(self, points, color, fill=True, only=None):
+        self.s.polygon([(x + OFFX, y + OFFY) for x, y in points], color, fill=fill, only=only)
+
+    def outline(self, color, where="outside", diagonals=False):
+        self.s.outline(color, where=where, diagonals=diagonals)
+
+    def composite(self, frame=None):
+        return self.s.composite(frame)
 
 
 def spear(s, x0, y0, x1, y1, glint=0):
@@ -37,8 +72,7 @@ def spear(s, x0, y0, x1, y1, glint=0):
     s.polygon([tip, base_l, (x1, y1)], SPEARHEAD[1])
     if glint:
         gx, gy = int(x1 + ux * 4), int(y1 + uy * 4)
-        if 0 <= gx < W and 0 <= gy < H:
-            s.px(gx, gy, SPARK)
+        s.px(gx, gy, SPARK)
 
 
 def helm_plume(s, hx, hy, wag=0):
@@ -161,7 +195,7 @@ def slash_poses():
 
 
 def render(kind, pose):
-    s = Sprite(W, H)
+    s = Canvas(SCRATCH, SCRATCH)
     if kind == "down":
         frame_down(s, pose)
     elif kind == "up":
