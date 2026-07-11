@@ -7,7 +7,7 @@
 <meta name="description" content="An Agent Skill that turns Claude into a pixel artist. No Aseprite, no MCP, no diffusion — every pixel is a decision.">
 <meta property="og:title" content="Pixel Art Studio — an Agent Skill">
 <meta property="og:description" content="Claude designs and places every pixel through Python/Pillow, critiques its own render, and iterates until it ships.">
-<meta property="og:image" content="https://gamezxz.github.io/pixel-art-studio/assets/witch.png">
+<meta property="og:image" content="https://gamezxz.github.io/pixel-art-studio/assets/capy_sheet.png">
 <style>
   /* DNA — cointh: warm cream + terracotta, three-font system (serif/sans/mono) */
   :root{
@@ -101,12 +101,12 @@
 
 <div class="wrap">
   <div class="gallery">
-    <figure><img src="assets/witch.png" height="230" alt="chibi witch"><figcaption>chibi witch 51×66 — learned style</figcaption></figure>
-    <figure><img src="assets/knight_chibi.png" height="230" alt="chibi knight"><figcaption>chibi knight 42×69</figcaption></figure>
-    <figure><img src="assets/dragon.png" height="200" alt="dragon hatchling"><figcaption>dragon hatchling 55×57</figcaption></figure>
+    <figure><img src="assets/capy_walk_down.gif" height="200" alt="capybara walk down"><figcaption>capybara walk · down</figcaption></figure>
+    <figure><img src="assets/capy_walk_left.gif" height="200" alt="capybara walk left"><figcaption>walk · left</figcaption></figure>
+    <figure><img src="assets/capy_walk_right.gif" height="200" alt="capybara walk right"><figcaption>walk · right</figcaption></figure>
     <figure><img src="assets/slime.gif" height="200" alt="slime bounce animation"><figcaption>slime bounce — 6 frames · squash &amp; stretch</figcaption></figure>
   </div>
-  <p class="note">A chibi cast in a style Claude <em>studied</em> from reference art (see the learned card), generated as sheets and locked onto shared palettes by <code>pixelpipe</code> — the slime's bounce cycle included, with true GIF transparency.</p>
+  <p class="note">Drawn pixel-by-pixel from a build script — the capybara's 4-direction walk cycle came from a single reference photo, the slime's bounce with true GIF transparency.</p>
 </div>
 
 <section id="fourdir">
@@ -138,10 +138,6 @@
     color explosion, and <strong>locks everything onto one shared palette</strong> — then hands you
     a build script to keep editing and animating. Every asset shares one color vocabulary, so a whole
     cast looks like one game.</p>
-    <div class="demo">
-      <img src="assets/cleanup_demo.png" alt="cleanup pipeline before/after">
-      <p class="demo-cap">a real run: codex-generated chibi cast (196,703 colors) → cleaned, background-stripped &amp; palette-locked (31 shared colors, ~64px each) by <code>pixelpipe</code> in one pass</p>
-    </div>
 <pre>python3 scripts/pixelpipe.py generated.png <span class="cmt">\</span>
   --strip-checker --max-colors 24 --display 6
 <span class="cmt"># or lock every asset to one game palette:</span>
@@ -149,10 +145,9 @@ python3 scripts/pixelpipe.py generated.png --palette my_game</pre>
     <div class="anim">
       <p class="anim-head">…then animate it deterministically — the same sprite, every frame:</p>
       <div class="anim-row">
-        <figure><img src="assets/knight_idle.gif" alt="knight idle"><figcaption>idle · 4 frames · breathing + plume sway</figcaption></figure>
         <figure><img src="assets/knight_walk.gif" alt="knight walk" height="360"><figcaption>walk · 6 frames · real stride, cleaned from a codex walk-cycle sheet</figcaption></figure>
       </div>
-      <p class="demo-cap">A codex-generated knight (174,172 colors) → <code>pixelpipe</code> dominant-block sampling (128px · 28 colors). Idle is puppeted from the single cleaned sprite; the walk is a codex-generated 6-frame walk-cycle sheet cleaned in one pass, so every frame shares one palette. No re-rolling between frames — the build script <em>is</em> the animation.</p>
+      <p class="demo-cap">A codex-generated knight (174,172 colors) → <code>pixelpipe</code> dominant-block sampling (128px · 28 colors). The walk is a codex-generated 6-frame walk-cycle sheet cleaned in one pass, so every frame shares one palette. No re-rolling between frames — the build script <em>is</em> the animation.</p>
     </div>
   </div>
 </section>

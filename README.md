@@ -5,8 +5,8 @@ Claude designs and places every pixel directly through Python/Pillow, looks at i
 critiques it against a professional checklist, and iterates until it ships.
 
 <p align="center">
-  <img src="docs/assets/witch.png" height="200" alt="forest witch">
-  <img src="docs/assets/dragon.png" height="200" alt="dragon boss">
+  <img src="docs/assets/capy_walk_down.gif" height="150" alt="capybara walk down">
+  <img src="docs/assets/capy_walk_right.gif" height="150" alt="capybara walk right">
   <img src="docs/assets/slime.gif" height="150" alt="slime idle animation">
 </p>
 
