@@ -101,8 +101,8 @@ python3 scripts/study.py sloppy_screenshot.png --scale 6 --strip-checker
 ```
 
 Claude inspects the analysis, writes an imperative style card into `references/learned/`,
-and applies those rules the next time you ask for art in that style. The witch above was
-drawn this way — from a style card learned off a single reference image.
+and applies those rules the next time you ask for art in that style. The capybara above was
+drawn this way — its chibi proportions follow a style card learned off a single reference image.
 
 ## Hybrid pipeline — clean & lock generated art
 
