@@ -71,6 +71,7 @@ this is the masking system; the shifted-shape shading recipe in `references/tech
 | Any new artwork (sizes, proportions, silhouette-first order, tiles) | `references/patterns.md` |
 | Color ramps, shading, dithering, AA, outlines, textures | `references/techniques.md` |
 | Animation (frame counts, timing tables, cycles, part-per-layer puppeting) | `references/animation.md` |
+| **Humanoid characters (2 arms + 2 legs) — full movement set** (walk/slash/thrust/spellcast/shoot/hurt) | `references/lpc.md` + `scripts/lpc.py` — assemble frames onto the LPC universal sheet (engine-ready layout) |
 | Palette choice, budgets, presets, learned palettes | `references/palettes.md` |
 | Export formats, engines (Unity/Godot/Phaser) | `references/export.md` |
 | Cleaning AI-generated / messy art, palette-locking, the hybrid pipeline | `references/cleanup.md` |
